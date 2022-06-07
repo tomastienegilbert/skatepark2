@@ -1,0 +1,82 @@
+ 
+    <h1>Skate Park</h1>
+
+    <div class="py-4">
+      <h2>Registro</h2>
+      <hr class="w-50" />
+
+      <form id="registroForm">
+        <div class="form-group row w-50 m-auto">
+          <div class="form-group col-12 col-sm-6">
+            <label>Email</label>
+            <input type="email" class="form-control m-auto" name="email" />
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Nombre</label>
+            <input type="text" class="form-control m-auto" name="nombre"/>
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Password</label>
+            <input type="password" class="form-control m-auto"  name="password"/>
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Repita la password</label>
+            <input type="password" class="form-control m-auto" name="passwordConfirm" />
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Años de experiencia</label>
+            <input type="number" class="form-control m-auto" name="experiencia"/>
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Especialidad</label>
+            <input type="text" class="form-control m-auto" name="especialidad"/>
+          </div>
+          <div class="form-group col-12 col-sm-12">
+            <label>Foto de perfil</label>
+            <input type="file" name="foto"/>
+          </div>
+        </div>
+        <p id="errorRegistro" ></p>
+        <button type="submit" class="btn btn-info mb-3">Registrarme</button>
+        <p><a href="http://localhost:3000/login"> Iniciar sesión</a></p>
+      </form>
+    </div>
+    
+   <script>
+
+     const registroForm = document.getElementById("registroForm");
+
+      registroForm.addEventListener("submit", async(e) => {
+     const errorRegistro = document.getElementById("errorRegistro");
+          e.preventDefault()
+          const dataForm = new FormData(registroForm)
+          const data = Object.fromEntries(dataForm);  
+          
+          if(data.password !== data.passwordConfirm){
+          return errorRegistro.innerHTML = "Las contraseñas no coinciden";
+          }
+
+          try{
+            const res = await fetch('/api/v1/participantes', {
+                method: 'post',
+                body: dataForm
+          })
+        const data = await res.json()
+
+        if(!data.ok){
+        return errorRegistro.innerHTML = data.msg
+        }
+      errorRegistro.innerHTML = "Usuario registrado, seras dirigido al login para ingresar"
+
+      setTimeout(function(){
+                window.location.href = "/login";
+            },5000);
+
+
+        console.log(data)
+          }catch(error){
+              console.log(error)
+          }
+      })
+          
+  </script>

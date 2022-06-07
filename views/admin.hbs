@@ -1,0 +1,58 @@
+
+    <h1>Skate Park</h1>
+
+    <div class="py-4">
+      <h2>Administración</h2>
+
+      <table class="table m-auto">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Foto</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Años de experiencia</th>
+            <th scope="col">Especialidad</th>
+            <th scope="col">Estado</th>
+            
+          </tr>
+        </thead>
+        <tbody id="table">
+         <form id="formAdmi">
+          {{#each info}}
+             <tr >
+            <th scope="row">{{this.id}}</th>
+            <td><img  class="admin-photo" src="/imgs/{{this.foto}}" alt="" width="50%"></td>
+           <td> {{this.nombre}}</td>
+            <td>{{this.anios_experiencia}}</td>
+            <td>{{this.especialidad}}</td>
+            <td><input type="checkbox" onclick="updateSkaterStatus(this.value)" value="{{ this.id }}" {{#if this.estado }} checked {{/if}} /></td>
+          </tr>
+
+          {{/each}}
+         </form>
+        </tbody>
+      </table>
+    </div>
+
+<script>
+
+ const updateSkaterStatus = async(skaterID) => {
+     
+    try{
+       const res = await fetch("/api/v1/check" , {
+          headers: {
+                        'Content-Type': 'application/json'
+                    },
+        method: 'POST',
+        body: JSON.stringify( {skaterID })
+      })
+    
+
+    }catch(e){
+      console.log(e)
+    }
+
+ }
+                
+
+</script>

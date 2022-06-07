@@ -1,0 +1,143 @@
+ 
+    <h1>Skate Park</h1>
+
+    <div class="py-4">
+      <h2>Datos del perfil</h2>
+      <hr class="w-50" />
+
+      <form id="updateForm">
+        <div class="form-group row w-50 m-auto">
+          <div class="form-group col-12 col-sm-6">
+            <label>Email</label>
+            <input
+              id="email"
+              name="email"
+              class="form-control m-auto"
+              disabled
+             
+            />
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Nombre</label>
+            <input id="nombre" type="text" name="nombre" class="form-control m-auto"  />
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Password</label>
+            <input
+              type="password"
+              id="password"
+              class="form-control m-auto"
+              name="password"
+            />
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Repita la password</label>
+            <input
+              type="password"
+              class="form-control m-auto"
+              name="passwordConfirm"
+             
+             
+            />
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Años de experiencia</label>
+            <input type="text" name="experiencia"  id="experiencia" class="form-control m-auto" />
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Especialidad</label>
+            <input  id="especialidad" class="form-control m-auto"  name="especialidad" type="text"  />
+          </div>
+        </div>
+        <div class="mb-1">
+          <p id="error" ></p>
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+        </div>
+        <div>
+          <a id="delete" class="btn btn-danger">Eliminar cuenta</a>
+        </div>
+      </form>
+      
+    </div>
+
+ <script>
+
+   const updateForm = document.getElementById('updateForm')
+   const nombre = document.getElementById("nombre")
+   const password = document.getElementById("password")
+   const experiencia = document.getElementById("experiencia")
+   const especialidad = document.getElementById("especialidad")
+   const email = document.getElementById("email")
+   const deleteButton = document.getElementById("delete")
+   const errorP = document.getElementById("error")
+   
+
+  const createValue = (idDB,nombreDB,emailDB,especialidadDB,experienciaDB,passwordDB) =>{
+    nombre.setAttribute("value", nombreDB);
+    experiencia.setAttribute("value", experienciaDB);
+    especialidad.setAttribute("value", especialidadDB);
+    email.setAttribute("value", emailDB);
+    deleteButton.setAttribute("href", `/delete/${idDB}`);
+  }
+
+   document.addEventListener('DOMContentLoaded', async() => {
+        if(!localStorage.getItem('token')){
+            window.location.href = "/login"
+        }
+    try{
+      const res = await fetch('/api/v1/update', {
+                method: 'get',
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            const data = await res.json()
+            
+            if(!data.ok){
+             return   window.location.href = "/login"
+            }
+            const {id,nombre,email,especialidad,anios_experiencia,password} = data.respuesta.user
+            
+            createValue(id,nombre,email,especialidad,anios_experiencia,password)
+        
+                updateForm.addEventListener("submit" , async(e) => {
+                  e.preventDefault();
+                  const dataForm = new FormData(updateForm)
+                  const data = Object.fromEntries(dataForm)
+                   if(data.password !== data.passwordConfirm){
+                  return errorP.innerHTML = "Las contraseñas no coinciden";
+                  }
+                try{
+                  const res = await fetch("/api/v1/update" , {
+                    method: 'put',
+                    body: dataForm,
+                    headers: {
+                                  Authorization: `Bearer ${localStorage.getItem('token')}`
+                              }
+                  })
+                  const data = await res.json()
+                  if(!data.ok){
+                    errorP.innerHTML = `
+                    <p>No fue posible actualizar tus datos</p>
+                    `
+                  
+                  }
+                  errorP.innerHTML = `
+                    <p>Tus datos ya fueron actualizados!</p>
+                    `
+                }catch(error){
+                    console.log(error)
+                }
+              })
+    }catch(error){
+      console.log(error)
+    }
+   })
+
+
+
+  
+
+
+ 
+ </script>
